@@ -1,0 +1,754 @@
+import java.awt.Toolkit;
+import java.awt.Container;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import javax.swing.JFrame;
+import java.io.File;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.lang.Math;
+
+/**
+ * Display board after every change!!! avoid glitch
+ * 
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Game
+{
+    private static final int COLUMN_A_COORDINATE = -10;
+    private static final int COLUMN_B_COORDINATE = 95;
+    private static final int COLUMN_C_COORDINATE = 198;
+    private static final int COLUMN_D_COORDINATE = 301;
+    private static final int COLUMN_E_COORDINATE = 404;
+
+    private static final int COLUMN_A = 0;
+    private static final int COLUMN_B = 1;
+    private static final int COLUMN_C = 2;
+    private static final int COLUMN_D = 3;
+    private static final int COLUMN_E = 4;
+    
+    private static final int ROW_1 = 0;
+    private static final int ROW_2 = 1;
+    private static final int ROW_3 = 2;
+    private static final int ROW_4 = 3;
+    private static final int ROW_5 = 4;
+    private static final int ROW_6 = 5;
+    private static final int ROW_11 = 6;
+    private static final int ROW_12 = 7;
+    private static final int ROW_13 = 8;
+    private static final int ROW_14 = 9;
+    private static final int ROW_15 = 10;
+    private static final int ROW_16 = 11;
+    
+    private static final int ROW_1_COORDINATE = -25;
+    private static final int ROW_2_COORDINATE = 25;
+    private static final int ROW_3_COORDINATE = 73;
+    private static final int ROW_4_COORDINATE = 120;
+    private static final int ROW_5_COORDINATE = 167;
+    private static final int ROW_6_COORDINATE = 215;
+    private static final int ROW_11_COORDINATE = 313;
+    private static final int ROW_12_COORDINATE = 363;
+    private static final int ROW_13_COORDINATE = 410;
+    private static final int ROW_14_COORDINATE = 458;
+    private static final int ROW_15_COORDINATE = 506;
+    private static final int ROW_16_COORDINATE = 554;
+
+    private static final int WIDTH = 200;
+    private static final int HEIGHT = 200;
+    private static final String GAME_BOARD_FILE_NAME = "Board.png";
+    private static final String UNKNOWN_RED_PIECE = "Red.png";
+    private static final String UNKNOWN_BLUE_PIECE = "Blue.png";
+
+    private static JFrame frame;
+    private static BufferedReader reader;
+    private static StackViaNodes recordOfTurns;
+    private static Piece[][] piece;
+    private static Board board;
+    private static BufferedImage[] pieceIcon;
+    private static BufferedImage[] unknownPieceIcon;
+    private static JLabel[] pieceLabel;
+    private static JLabel[] unknownPieceLabel;
+    private static Container pane;
+    private static boolean flag;
+    private static Piece selectedPiece;
+    
+    public static void main (String[] arguments)
+    {
+        recordOfTurns = new StackViaNodes();
+        createJFrame();
+        System.out.println("Welcome to Luzhanqi!\n\n");
+        setUpBoard();
+        pushBoard();
+        flag = true;
+        do
+        {
+            takeTurn();
+        }
+        while (flag);
+    }
+    
+    public static void pushBoard()
+    {
+        recordOfTurns.push(board);
+        Board oldBoard = board;
+        board = new Board(oldBoard);
+    }
+    
+    public static void takeTurn()
+    {
+        
+        takeTurn: for (int i = 0; i < 2; i ++)
+        {
+            displayNeutralBoard();
+            
+            selectedPiece = null;
+            
+            try
+            {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                boolean inputOK = false;
+                do
+                {    
+                    inputOK = false;
+                    int playerNumber = 0;
+                    if (i == 0) playerNumber = 2;
+                    if (i == 1) playerNumber = 1;
+                    System.out.println("\n\nPlayer" + playerNumber + " turn: (Press Enter when ready)");
+                    reader.readLine();
+                    displayBoard(i);
+                    System.out.println("Please select a piece to move: ");
+                    String input = reader.readLine();
+                    String[] split = input.split(" ");
+                    String destination;
+                    
+                
+                    System.out.println("Where would you like to move the piece?");
+                    destination = reader.readLine();
+                    if (destination.equals("Return") || destination.equals("return"))
+                    {
+                        recordOfTurns.pop();
+                        board = (Board) (((Node)(recordOfTurns.pop())).getData());
+                        continue takeTurn;
+                    }
+                    
+                    try
+                    {
+                        int currentXCoordinate = convertLetterToNumber(split[0]);
+                        int currentYCoordinate = 0;
+                        if (Integer.parseInt(split[1]) <= 6 && Integer.parseInt(split[1]) >= 1)
+                        {
+                            currentYCoordinate = Integer.parseInt(split[1]) - 1;
+                        }
+                        if (Integer.parseInt(split[1]) <= 16 && Integer.parseInt(split[1]) >= 11)
+                        {
+                            currentYCoordinate = Integer.parseInt(split[1]) - 5;
+                        }
+                        
+                        String[] destinationCoordinate = destination.split(" ");
+                        int destinationXCoordinate = convertLetterToNumber(destinationCoordinate[0]);
+                        int destinationYCoordinate = 0;
+                        if (Integer.parseInt(destinationCoordinate[1]) <= 6 && Integer.parseInt(destinationCoordinate[1]) >= 1)
+                        {
+                            destinationYCoordinate = Integer.parseInt(destinationCoordinate[1]) - 1;
+                        }
+                        if (Integer.parseInt(destinationCoordinate[1]) <= 16 && Integer.parseInt(destinationCoordinate[1]) >= 11)
+                        {
+                            destinationYCoordinate = Integer.parseInt(destinationCoordinate[1]) - 5;
+                        }
+                       
+                        if (currentYCoordinate == 5 && (currentXCoordinate == 1 || currentXCoordinate == 3) && destinationYCoordinate == 6 && (destinationXCoordinate == 1 || destinationXCoordinate == 3)) continue;
+                        if (currentYCoordinate == 6 && (currentXCoordinate == 1 || currentXCoordinate == 3) && destinationYCoordinate == 5 && (destinationXCoordinate == 1 || destinationXCoordinate == 3)) continue;
+                       
+                        selectedPiece = board.getPiece(currentXCoordinate, currentYCoordinate);
+                        if (selectedPiece.getSide() != i)
+                        {
+                            if (selectedPiece.getRank() != 9 && selectedPiece.getRank() != -2)
+                            {
+                                
+                                if ((isCampsite(destinationXCoordinate, destinationYCoordinate) || isCampsite(currentXCoordinate, currentYCoordinate))&& Math.abs(currentXCoordinate - destinationXCoordinate) < 2 && Math.abs(currentYCoordinate - destinationYCoordinate) < 2)
+                                {
+                                    inputOK = board.movePiece(currentXCoordinate, currentYCoordinate, destinationXCoordinate, destinationYCoordinate);
+                                    displayChanges();
+                                }
+                                else if (Math.abs(currentXCoordinate - destinationXCoordinate) < 2 && Math.abs(currentYCoordinate - destinationYCoordinate) == 0)
+                                {
+                                    inputOK = board.movePiece(currentXCoordinate, currentYCoordinate, destinationXCoordinate, destinationYCoordinate);
+                                    displayChanges();
+                                }
+                                else if (Math.abs(currentXCoordinate - destinationXCoordinate) == 0 && Math.abs(currentYCoordinate - destinationYCoordinate) < 2)
+                                {
+                                    inputOK = board.movePiece(currentXCoordinate, currentYCoordinate, destinationXCoordinate, destinationYCoordinate);
+                                    displayChanges();
+                                    displayRedSideBoard();
+                                    displayBlueSideBoard();
+                                }
+                                else if (onRailroad(currentXCoordinate, currentYCoordinate) && onRailroad(destinationXCoordinate, destinationYCoordinate))
+                                {
+                                    if (currentYCoordinate == destinationYCoordinate)
+                                    {
+                                        inputOK = movePieceOnRailroad(1, currentXCoordinate, destinationXCoordinate, destinationYCoordinate);
+                                        displayChanges();
+                                        displayRedSideBoard();
+                                        displayBlueSideBoard();
+                                        
+                                    }
+                                    else if (currentXCoordinate == destinationXCoordinate)
+                                    {
+                                        inputOK = movePieceOnRailroad(0, currentYCoordinate, destinationYCoordinate, destinationXCoordinate);
+                                        displayChanges();
+                                        displayRedSideBoard();
+                                        displayBlueSideBoard();
+                                    }
+                                }
+                                
+                                displayBoard(i);
+                                
+                                if (inputOK == true)
+                                {
+                                    System.out.println("You have finished your turn: (press enter)");
+                                }
+                                else if (inputOK == false)
+                                {
+                                    System.out.println("Your move is illegal and cannot be performed (press enter to re-enter to take your turn again)");
+                                }
+                                reader.readLine();
+                                
+                                if (checkFlag() == 1)
+                                {
+                                    flag = false;
+                                    System.out.println ("Congratulations! Player 1 (Red Side) has won!");
+                                    return;
+                                }
+                                else if (checkFlag() == 0)
+                                {
+                                    flag = false;
+                                    System.out.println("Congratulations! Player 2 (Blue Side) has won!");
+                                    return;
+                                }
+                            }
+                        }
+                    } 
+                    catch (NumberFormatException inputNumberFormatException)
+                    {
+                        System.out.println("Please enter appropriate values.");
+                    }
+                    catch (ArrayIndexOutOfBoundsException inputArrayIndexOutOfBoundsException)
+                    {
+                        System.out.println("Please enter valid board coordinates (Ex. A 1) with a space in between.");
+                    }
+                    catch (NullPointerException inputNullPointerException)
+                    {
+                        System.out.println("Please select your piece and a place to move to.");
+                    }
+                }
+                while (inputOK == false);
+                
+                reader.close();
+            }
+            catch (IOException ioException)
+            {
+            }
+            catch (NumberFormatException numberFormatException)
+            {
+            }
+            catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException)
+            {
+            }
+            pushBoard();
+        }
+    }
+    
+    public static boolean isCampsite(int xCoordinate, int yCoordinate)
+    {
+        if ((xCoordinate == COLUMN_B || xCoordinate == COLUMN_D) && (yCoordinate == ROW_3 || yCoordinate == ROW_5 || yCoordinate == ROW_12 || yCoordinate == ROW_14)) return true;    
+        if (xCoordinate == COLUMN_C && (yCoordinate == ROW_4 || yCoordinate == ROW_13)) return true; 
+        return false;
+    }
+    
+    public static void displayBoard(int sideToDisplay)
+    {
+       if (sideToDisplay == 0 || sideToDisplay == 2)
+       {
+          displayBlueSideBoard(); 
+       }
+       if (sideToDisplay == 1)
+       {
+          displayRedSideBoard(); 
+       }
+    }
+    public static void displayChanges()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            for (int k = 0; k < 25; k ++)
+            {
+                if (pieceEliminated(piece[i][k]))
+                {
+                    pieceLabel[piece[i][k].getID()].setBounds(0,0,0,0);
+                    unknownPieceLabel[piece[i][k].getID()].setBounds(0,0,0,0);
+                }
+            }
+        }
+    }
+    
+    public static boolean pieceEliminated (Piece piece)
+    {
+        Piece[][] piecesToCheck = board.getBoard();
+        for (int i = 0; i < 5; i++)
+        {
+            for (int k = 0; k < 12; k++)
+            {
+                if (piecesToCheck[i][k] == piece)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Returns 0 if red flag (Player 1) is missing or 1 if blue flag (Player 2) is missing otherwise returns -1;
+     */
+    public static int checkFlag()
+    {
+        if (board.getPiece(1, 0).getName() != "Flag" && board.getPiece(3, 0).getName()!= "Flag") return 0;
+        if (board.getPiece(1, 11).getName() != "Flag" && board.getPiece(3, 11).getName()!= "Flag") return 1;
+        return -1;
+    }
+    
+    /**
+     * Assuming one of the X or Y coordinates is equal, compares the other coordinate and moves the piece accordingly. y == 0, x == 1
+     */
+    public static boolean movePieceOnRailroad(int compareXorY, int currentCoordinate, int destinationCoordinate, int constantCoordinate)
+    {
+        if (currentCoordinate > destinationCoordinate)
+        {
+            for (int i = currentCoordinate - 1; i >= destinationCoordinate; i--)
+            {
+                if (compareXorY == 0)
+                {
+                    if (board.getPiece(constantCoordinate, i) != null)
+                    {
+                        return board.movePiece(constantCoordinate, currentCoordinate, constantCoordinate, i);
+                    }
+                }
+                else if (compareXorY == 1)
+                {
+                    if (board.getPiece(i, constantCoordinate) != null)
+                    {
+                        return board.movePiece(currentCoordinate, constantCoordinate, i, constantCoordinate);
+                    }
+                }
+                if (i == destinationCoordinate)
+                {
+                    if (compareXorY == 0)
+                    {
+                        return board.movePiece(constantCoordinate, currentCoordinate, constantCoordinate, destinationCoordinate);
+                    }
+                    else if (compareXorY == 1)
+                    {
+                        return board.movePiece(currentCoordinate, constantCoordinate, destinationCoordinate, constantCoordinate);
+                    }
+                }
+            }
+        }
+        else if (currentCoordinate < destinationCoordinate)
+        {
+            for (int i = currentCoordinate + 1; i <= destinationCoordinate; i++)
+            {
+                if (compareXorY == 0)
+                {
+                    if (board.getPiece(constantCoordinate, i) != null)
+                    {
+                        return board.movePiece(constantCoordinate, currentCoordinate, constantCoordinate, i);
+                    }
+                }
+                else if (compareXorY == 1)
+                {
+                    if (board.getPiece(i, constantCoordinate) != null)
+                    {
+                        return board.movePiece(currentCoordinate, constantCoordinate, i, constantCoordinate);
+                    }
+                }
+                if (i == destinationCoordinate)
+                {
+                     if (compareXorY == 0)
+                    {
+                        return board.movePiece(constantCoordinate, currentCoordinate, constantCoordinate, destinationCoordinate);
+                    }
+                    else if (compareXorY == 1)
+                    {
+                        return board.movePiece(currentCoordinate, constantCoordinate, destinationCoordinate, constantCoordinate);
+                    }
+                }
+            }
+        }        
+        return false;
+    }
+    
+    public static boolean onRailroad(int currentXCoordinate, int currentYCoordinate)
+    {
+        if (currentYCoordinate == 1 || currentYCoordinate == 5 || currentYCoordinate == 6 || currentYCoordinate == 10) return true;
+        else if ((currentXCoordinate == 0 && (currentYCoordinate != 0 && currentYCoordinate != 11)) || (currentXCoordinate == 4 && (currentYCoordinate != 0 && currentYCoordinate != 11))) return true;
+        return false;
+    }
+    
+    public static boolean isHeadquarter(int xCoordinate, int yCoordinate)
+    {
+        if ((xCoordinate == COLUMN_B || xCoordinate == COLUMN_D) && (yCoordinate == ROW_1 || yCoordinate == ROW_16)) return true;
+        return false;
+    }
+    
+    public static boolean landminePlacement(int yCoordinate)
+    {
+        if (yCoordinate == ROW_1 || yCoordinate == ROW_2 || yCoordinate == ROW_15 || yCoordinate == ROW_16) return true;
+        return false;
+    }
+    
+    public static void setUpBoard()
+    {
+        board = new Board();
+        for (int z = 1; z < 3; z++)
+        {    
+            try
+            {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                boolean inputOK = false;
+                if (z == 2)
+                {
+                    System.out.println("Please press enter when you are finished");
+                    reader.readLine();
+                    displayBlueSideBoard();
+                }
+                System.out.println("Player " + z + " please get ready to place your pieces on the board: (Press Enter when ready)\n");
+                reader.readLine();
+                do
+                {
+                    System.out.println("\nPlease input the coordinates of your desired placement of the team flag (Ex: A 1)");
+                    try
+                    {
+                        String input = reader.readLine();
+                        
+                        String[] split = new String[2];
+                        split = input.split(" ");
+                        int coordinateX = convertLetterToNumber(split[0]);
+                        int coordinateY = Integer.parseInt(split[1]);
+                        if (z == 1 && coordinateY < 7)
+                        {
+                            coordinateY = Integer.parseInt(split[1]) - 1;
+                            if (isHeadquarter(coordinateX, coordinateY)) inputOK = board.addPiece(piece[z-1][0],coordinateX, coordinateY);
+                        }
+                        if (z == 2 && coordinateY < 17 && coordinateY > 10)
+                        {
+                             coordinateY = Integer.parseInt(split[1]) - 5;
+                             if (isHeadquarter(coordinateX, coordinateY)) inputOK = board.addPiece(piece[z-1][0],coordinateX, coordinateY);
+                        }
+                        
+                            
+                        if (z == 1) displayRedSideBoard();
+                        if (z == 2) displayBlueSideBoard();
+                        
+                    }
+                    catch (IOException exception)
+                    {
+                    }
+                    catch (NumberFormatException exception3)
+                    {
+                    }
+                }
+                while (inputOK == false);
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    inputOK = false;
+                    do
+                    {
+                      
+                      System.out.println("\nPlease input the coordinates of your desired placement of the Landmines (Ex: A 1)");
+                        try
+                        {
+                            String input = reader.readLine();
+                            String[] split = new String[2];
+                            split = input.split(" ");
+                            
+                            int coordinateX = convertLetterToNumber(split[0]);
+                            int coordinateY = Integer.parseInt(split[1]);
+                            if (z == 1 && coordinateY < 7)
+                            {
+                                coordinateY = Integer.parseInt(split[1]) - 1;
+                                if (landminePlacement(coordinateY)) inputOK = board.addPiece(piece[z - 1][i + 22],coordinateX, coordinateY);
+                            }
+                            if (z == 2 && coordinateY < 17 && coordinateY > 10)
+                            {
+                                coordinateY = Integer.parseInt(split[1]) - 5;
+                                if (landminePlacement(coordinateY)) inputOK = board.addPiece(piece[z - 1][i + 22],coordinateX, coordinateY);
+                            }                               
+                           
+                            if (z == 1) displayRedSideBoard();
+                            if (z == 2) displayBlueSideBoard();
+                            
+                        }
+                        catch (IOException exception)
+                        {
+                        }
+                        catch (ArrayIndexOutOfBoundsException exception2)
+                        {
+                        }
+                        catch (NumberFormatException exception3)
+                        {
+                        }
+                    }
+                    while (inputOK == false);
+                }
+                
+               
+                for (int i = 1; i < 22; i++)
+                {
+                    inputOK = false;
+                    do
+                    {
+                        System.out.println("\nPlease input the coordinates of your desired placement of the " + piece[0][i].getName() + " (Ex: A 1)");
+                        try
+                        {
+                             String input = reader.readLine();
+                             String[] split = new String[2];
+                            
+                             split = input.split(" ");
+                             int coordinateX = convertLetterToNumber(split[0]);
+                             int coordinateY = Integer.parseInt(split[1]);                             
+                             
+                             if (z == 1 && coordinateY < 7)
+                             {
+                                 coordinateY = Integer.parseInt(split[1]) - 1;
+                                 if (!(isCampsite(coordinateX, coordinateY))) inputOK = board.addPiece(piece[z - 1][i],coordinateX, coordinateY);
+                             }
+                             if (z == 2 && coordinateY < 17 && coordinateY > 10)
+                             {
+                                 coordinateY = Integer.parseInt(split[1]) - 5;
+                                 if (!(isCampsite(coordinateX, coordinateY))) inputOK = board.addPiece(piece[z - 1][i],coordinateX, coordinateY);
+                             }
+                             
+                             if (z == 1) displayRedSideBoard();
+                             if (z == 2) displayBlueSideBoard();
+                             
+                             if (inputOK == false)
+                             {
+                                 System.out.println("Please input valid coordinates for the location of your" + piece[0][i].getName() + "\n");
+                             }
+                        }
+                        catch (IOException exception)
+                        {
+                        }
+                        catch (ArrayIndexOutOfBoundsException exception2)
+                        {
+                        }
+                        catch (NumberFormatException exception3)
+                        {
+                        }
+                    }while (inputOK == false);
+                }
+                
+                
+                reader.close();
+            }
+            catch(IOException exception)
+            {
+            }
+        }
+    }
+    
+    public static int convertLetterToNumber(String letter)
+    {
+        if (letter.equals("A")) return 0;
+        else if (letter.equals("B")) return 1;
+        else if (letter.equals("C")) return 2;
+        else if (letter.equals("D")) return 3;
+        else if (letter.equals("E")) return 4;
+        return -1;
+    }
+    
+    public static void displayRedSideBoard()
+    {
+        Piece[][] boardToDisplay = board.getBoard();
+        for (int i = 0; i < 5; i ++)
+        {
+            for (int k = 0; k < 12; k++)
+            {
+                if (boardToDisplay[i][k] != null && boardToDisplay[i][k].getSide() == 0)
+                {
+                    unknownPieceLabel[boardToDisplay[i][k].getID()].setBounds(0,0,0,0);
+                    pieceLabel[boardToDisplay[i][k].getID()].setBounds(integerToXCoordinates(i), integerToYCoordinates(k),WIDTH, HEIGHT);
+                }
+                else if ( boardToDisplay[i][k] != null && boardToDisplay[i][k].getSide() != 0)
+                {
+                    unknownPieceLabel[boardToDisplay[i][k].getID()].setBounds(integerToXCoordinates(i), integerToYCoordinates(k),WIDTH, HEIGHT);
+                }
+            }
+        }
+    }
+    
+    public static void displayBlueSideBoard()
+    {
+        Piece[][] boardToDisplay = board.getBoard();
+        for (int i = 0; i < 5; i ++)
+        {
+            for (int k = 0; k < 12; k++)
+            {
+                if (boardToDisplay[i][k] != null && boardToDisplay[i][k].getSide() == 1)
+                {
+                    unknownPieceLabel[boardToDisplay[i][k].getID()].setBounds(0,0,0,0);
+                    pieceLabel[boardToDisplay[i][k].getID()].setBounds(integerToXCoordinates(i), integerToYCoordinates(k),WIDTH, HEIGHT);
+                }
+                else if (boardToDisplay[i][k] != null && boardToDisplay[i][k].getSide() != 1)
+                {
+                    unknownPieceLabel[boardToDisplay[i][k].getID()].setBounds(integerToXCoordinates(i), integerToYCoordinates(k),WIDTH, HEIGHT);
+                }
+            }
+        }
+    }
+    
+    public static void displayNeutralBoard()
+    {
+        Piece[][] boardToDisplay = board.getBoard();
+        for (int i = 0; i < 5; i ++)
+        {
+            for (int k = 0; k < 12; k++)
+            {
+                if (boardToDisplay[i][k] != null)
+                {
+                    unknownPieceLabel[boardToDisplay[i][k].getID()].setBounds(integerToXCoordinates(i), integerToYCoordinates(k),WIDTH, HEIGHT);
+                }
+            }
+        }
+    }
+    
+    public static int integerToXCoordinates(int integer)
+    {
+        if (integer == 0) return COLUMN_A_COORDINATE;
+        if (integer == 1) return COLUMN_B_COORDINATE;
+        if (integer == 2) return COLUMN_C_COORDINATE;
+        if (integer == 3) return COLUMN_D_COORDINATE;
+        if (integer == 4) return COLUMN_E_COORDINATE;
+        return 0;
+    }
+    
+    public static int integerToYCoordinates(int integer)
+    {
+        if (integer == 0) return ROW_1_COORDINATE; 
+        if (integer == 1) return ROW_2_COORDINATE;
+        if (integer == 2) return ROW_3_COORDINATE;
+        if (integer == 3) return ROW_4_COORDINATE;
+        if (integer == 4) return ROW_5_COORDINATE;
+        if (integer == 5) return ROW_6_COORDINATE;
+        
+        if (integer == 6) return ROW_11_COORDINATE;
+        if (integer == 7) return ROW_12_COORDINATE;
+        if (integer == 8) return ROW_13_COORDINATE;
+        if (integer == 9) return ROW_14_COORDINATE;
+        if (integer == 10) return ROW_15_COORDINATE;
+        if (integer == 11) return ROW_16_COORDINATE;
+        return 0;
+    }
+    
+    public static void createJFrame()
+    {
+        frame = new JFrame("Luzhanqi");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        pane = frame.getContentPane();
+        pane.setLayout(null);
+        
+        frame.setSize(1700,1000);
+        frame.setVisible(true);
+        initializeBoard();
+    }
+    
+    public static void initializeBoard()
+    {
+        createPieces();
+        pieceIcon = new BufferedImage [50];
+        unknownPieceIcon = new BufferedImage[50];
+        pieceLabel = new JLabel [50];
+        unknownPieceLabel = new JLabel [50];
+        String unknownPieceSide = UNKNOWN_RED_PIECE;
+        for (int i = 0; i < 2; i++)
+        {
+            for (int k = 0; k < 25; k ++)
+            {
+                try
+                {
+                    if (i == 0)unknownPieceSide = UNKNOWN_RED_PIECE;
+                    if (i == 1)unknownPieceSide = UNKNOWN_BLUE_PIECE;
+                    unknownPieceIcon[piece[i][k].getID()] = ImageIO.read(new File(unknownPieceSide));
+                    unknownPieceLabel[piece[i][k].getID()] = new JLabel(new ImageIcon(unknownPieceIcon[piece[i][k].getID()]));
+                    pane.add(unknownPieceLabel[piece[i][k].getID()]);
+                    unknownPieceLabel[piece[i][k].getID()].setBounds(0,0,0,0);
+                    
+                    pieceIcon[piece[i][k].getID()] = ImageIO.read(new File(piece[i][k].getImageLocation()));
+                    pieceLabel[piece[i][k].getID()] = new JLabel(new ImageIcon(pieceIcon[piece[i][k].getID()]));
+                    pane.add(pieceLabel[piece[i][k].getID()]);
+                    pieceLabel[piece[i][k].getID()].setBounds(0,0,0,0);
+                }
+                catch(IOException exception)
+                {
+                }
+            }
+        }
+        
+        try
+        {
+            BufferedImage luzhanqiBoardImage = ImageIO.read(new File(GAME_BOARD_FILE_NAME));
+            JLabel backgroundImage = new JLabel(new ImageIcon(luzhanqiBoardImage));
+            pane.add(backgroundImage);
+            backgroundImage.setBounds(-475,-150,1700,1000);
+        }
+        catch(IOException exception)
+        {
+        }
+    }
+    
+    public static void createPieces()
+    {
+        piece = new Piece[2][25]; 
+        for (int i = 0; i < 2; i++)
+        {
+           
+             
+            piece[i][0] = new Piece(i, -2, i * 25 + 0);//magic value
+            piece[i][1] = new Piece(i, -1, i * 25 + 1);
+            piece[i][2] = new Piece(i, -1, i * 25 + 2);
+            piece[i][3] = new Piece(i, 0, i * 25 + 3);
+            piece[i][4] = new Piece(i, 0, i * 25 + 4);
+            piece[i][5] = new Piece(i, 0, i * 25 + 5);
+            piece[i][6] = new Piece(i, 1, i * 25 + 6);
+            piece[i][7] = new Piece(i, 1, i * 25 + 7);
+            piece[i][8] = new Piece(i, 1, i * 25 + 8);
+            piece[i][9] = new Piece(i, 2, i * 25 + 9);
+            piece[i][10] = new Piece(i, 2, i * 25 + 10);
+            piece[i][11] = new Piece(i, 2, i * 25 + 11);
+            piece[i][12] = new Piece(i, 3, i * 25 + 12);
+            piece[i][13] = new Piece(i, 3, i * 25 + 13);
+            piece[i][14] = new Piece(i, 4, i * 25 + 14);
+            piece[i][15] = new Piece(i, 4, i * 25 + 15);
+            piece[i][16] = new Piece(i, 5, i * 25 + 16);
+            piece[i][17] = new Piece(i, 5, i * 25 + 17);
+            piece[i][18] = new Piece(i, 6, i * 25 + 18);
+            piece[i][19] = new Piece(i, 6, i * 25 + 19);
+            piece[i][20] = new Piece(i, 7, i * 25 + 20);
+            piece[i][21] = new Piece(i, 8, i * 25 + 21);
+            piece[i][22] = new Piece(i, 9, i * 25 + 22);
+            piece[i][23] = new Piece(i, 9, i * 25 + 23);
+            piece[i][24] = new Piece(i, 9, i * 25 + 24);
+            
+        }
+    }
+}

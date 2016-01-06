@@ -1,0 +1,26 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Node()
+comment0.text=\r\n\ Creates\ a\ node\ with\ default\ characteristics.\r\n
+comment1.params=newNodeData\ nextNode
+comment1.target=Node(java.lang.Object,\ Node)
+comment1.text=\r\n\ Creates\ a\ node\ with\ specified\ characteristics.\r\n\ \r\n\ @param\ newNodeData\ the\ data\ to\ be\ stored\ in\ this\ node\r\n\ @param\ nextNode\ the\ node\ that\ follows\ this\ node\r\n
+comment2.params=otherNode
+comment2.target=boolean\ equals(java.lang.Object)
+comment2.text=\r\n\ Indicates\ whether\ another\ Node\ has\ data\ identical\ to\ this\ node's\ data.\r\n\ \r\n\ @param\ otherNode\ the\ object\ whose\ data\ is\ compared\ to\ this\ node's\ data\r\n\ @return\ <code>true</code>\ if\ the\ objects\ have\ identical\ data\ or\ <code>false</code>\ otherwise\r\n
+comment3.params=
+comment3.target=java.lang.Object\ getData()
+comment3.text=\r\n\ Returns\ the\ data\ stored\ in\ this\ node.\r\n\ \r\n\ @return\ the\ data\ of\ this\ node\r\n
+comment4.params=
+comment4.target=Node\ getNext()
+comment4.text=\r\n\ Returns\ the\ node\ that\ follows\ this\ node.\r\n\ \r\n\ @return\ the\ node\ which\ follows\ this\ node\r\n
+comment5.params=
+comment5.target=java.lang.String\ toString()
+comment5.text=\r\n\ Returns\ a\ string\ representation\ of\ this\ node.\r\n\ \r\n\ @return\ a\ string\ representation\ of\ this\ node\r\n
+comment6.params=newNodeData
+comment6.target=void\ setData(java.lang.Object)
+comment6.text=\r\n\ Sets\ the\ data\ to\ be\ stored\ in\ this\ node.\r\n\ \r\n\ @param\ the\ data\ to\ be\ stored\ in\ this\ node\r\n
+comment7.params=nextNode
+comment7.target=void\ setNext(Node)
+comment7.text=\r\n\ Sets\ the\ node\ that\ follows\ this\ node.\r\n\ \r\n\ @param\ the\ node\ that\ follows\ this\ node\r\n
+numComments=8

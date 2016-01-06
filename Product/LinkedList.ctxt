@@ -1,0 +1,26 @@
+#BlueJ class context
+comment0.params=
+comment0.target=LinkedList()
+comment0.text=\r\n\ Constructs\ a\ LinkedList\ with\ default\ characteristics.\ \r\n
+comment1.params=head
+comment1.target=void\ initializeList(Node)
+comment1.text=\r\n\ Initializes\ a\ linked\ list/\r\n\ \r\n\ @param\ head\ the\ head\ of\ the\ linked\ list\r\n
+comment2.params=
+comment2.target=Node\ getHead()
+comment2.text=\r\n\ Returns\ the\ head\ of\ the\ linked\ list.\r\n\ \r\n\ @return\ the\ head\ of\ the\ linked\ list\r\n
+comment3.params=
+comment3.target=Node\ getTail()
+comment3.text=\r\n\ Returns\ the\ tail\ of\ the\ linked\ list.\r\n\ \r\n\ @return\ the\ tail\ of\ the\ linked\ list\r\n
+comment4.params=newHead
+comment4.target=void\ insertAtHead(Node)
+comment4.text=\r\n\ Inserts\ a\ node\ at\ the\ head\ of\ the\ linked\ list.\ The\ entry\ must\ be\ a\ Node.\r\n\ \r\n\ @param\ newHead\ the\ new\ head\ of\ the\ linked\ list\r\n
+comment5.params=newTail
+comment5.target=void\ insertAtTail(Node)
+comment5.text=\r\n\ Inserts\ a\ node\ at\ the\ tail\ of\ the\ linked\ list.\ The\ entry\ must\ be\ a\ Node.\r\n\ \r\n\ @param\ newTail\ the\ new\ tail\ of\ the\ linked\ list\r\n
+comment6.params=newNode\ insertionPoint
+comment6.target=void\ insertInMiddle(Node,\ Node)
+comment6.text=\r\n\ Inserts\ a\ node\ in\ the\ middle\ of\ the\ linked\ list.\ Entry\ must\ be\ a\ Node\ and\ its\ next\ node\ should\ be\ an\ entry\ in\ a\ linked\ list.\ \r\n\ \r\n\ @param\ newNode\ the\ node\ to\ be\ inserted\ in\ the\ middle\ of\ the\ linked\ list\r\n
+comment7.params=
+comment7.target=java.lang.String\ toString()
+comment7.text=\r\n\ Returns\ a\ string\ representation\ of\ this\ linked\ list.\r\n\ \r\n\ @return\ a\ string\ representation\ of\ this\ linked\ list\r\n
+numComments=8

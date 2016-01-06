@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Board()
+comment0.text=\r\n\ Constucts\ a\ board\ with\ default\ characteristics.\r\n
+comment1.params=board
+comment1.target=Board(Board)
+comment1.text=\r\n\ Constructs\ a\ board\ that\ is\ identical\ to\ the\ another\ board.\r\n\ \r\n\ @param\ board\ the\ other\ board\ to\ be\ made\ identical\ to\r\n
+comment2.params=
+comment2.target=Piece[][]\ getBoard()
+comment2.text=\r\n\ Returns\ the\ board\ of\ this\ Board.\r\n\ \r\n\ @return\ a\ 2D\ array\ of\ Pieces\ representing\ the\ board\ of\ this\ Luzhanqi\ game\r\n
+comment3.params=x\ y
+comment3.target=Piece\ getPiece(int,\ int)
+comment3.text=\r\n\ Returns\ the\ piece\ at\ the\ specified\ x\ and\ y\ coordinates.\r\n\ \r\n\ @param\ x\ the\ x\ coordinate\ of\ the\ piece\r\n\ @param\ y\ the\ y\ coordinate\ of\ the\ piece\r\n\ @return\ the\ Piece\ at\ board\ location\ x\ and\ y\r\n
+comment4.params=piece\ locationx\ locationy
+comment4.target=boolean\ addPiece(Piece,\ int,\ int)
+comment4.text=\r\n\ Adds\ a\ piece\ to\ the\ board,\ returns\ true\ if\ the\ piece\ is\ added\ correctly,\ false\ otherwise.\ \r\n\ \r\n\ @param\ piece\ the\ piece\ to\ be\ added\r\n\ @param\ locationx\ the\ x\ coordinate\ of\ the\ location\ the\ piece\ is\ to\ be\ added\ in\r\n\ @param\ locationy\ the\ y\ coordinate\ of\ the\ location\ the\ piece\ is\ to\ be\ added\ in\r\n\ @return\ true\ if\ the\ piece\ is\ added\ correctly,\ otherwise\ false\r\n
+comment5.params=locationx1\ locationy1\ locationx2\ locationy2
+comment5.target=boolean\ movePiece(int,\ int,\ int,\ int)
+comment5.text=\r\n\ Moves\ piece\ from\ <code>locationx1</code>,<code>locationy1</code>\ to\ <code>locationx2</code>,\ \r\n\ <code>locationy2</code>\ and\ collides\ with\ the\ piece\ (if\ existing)\ at\ <code>locationx2</code>,\ \r\n\ <code>locationy2</code>.\ Returns\ true\ if\ the\ piece\ was\ moved\ successfully,\ false\ otherwise.\r\n\ \r\n\ @param\ locationx1\ the\ x\ coordinate\ of\ the\ location\ of\ the\ piece\ to\ be\ moved\r\n\ @param\ locationy1\ the\ y\ coordiante\ of\ the\ location\ of\ the\ piece\ to\ be\ moved\r\n\ @param\ locationx2\ the\ x\ coordinate\ of\ the\ destination\ location\r\n\ @param\ locationy2\ the\ y\ coordinate\ of\ the\ destination\ location\r\n\ @return\ true\ if\ the\ piece\ is\ moved\ successfully,\ false\ otherwise.\r\n
+comment6.params=locationx\ locationy
+comment6.target=void\ removePiece(int,\ int)
+comment6.text=\r\n\ Removes\ the\ piece\ at\ the\ specified\ location\ from\ the\ board\r\n\ \r\n\ @param\ locationx\ the\ x\ coordinate\ of\ the\ location\ where\ the\ piece\ is\ to\ be\ removed\r\n\ @param\ locationy\ the\ y\ coordinate\ of\ the\ location\ where\ the\ piece\ is\ to\ be\ removed\r\n
+numComments=7

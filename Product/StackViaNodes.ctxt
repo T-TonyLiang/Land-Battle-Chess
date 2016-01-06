@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=
+comment0.target=StackViaNodes()
+comment0.text=\r\n\ Constructs\ a\ stack\ of\ string.\r\n\ \r\n\ @param\ head\ the\ head\ of\ the\ linked\ list\r\n
+comment1.params=
+comment1.target=int\ getSize()
+comment1.text=\r\n\ Returns\ the\ number\ of\ elements\ on\ this\ stack.\r\n\ \r\n\ @return\ the\ number\ of\ elements\ on\ this\ stack\r\n
+comment2.params=
+comment2.target=boolean\ isEmpty()
+comment2.text=\r\n\ Returns\ <code>true</code>\ if\ the\ stack\ is\ empty,\ otherwise\ <code>false</code>.\r\n\ \r\n\ @return\ <code>true</code>\ if\ this\ stack\ is\ empty,\ otherwise\ <code>false</code>.\r\n
+comment3.params=
+comment3.target=java.lang.String\ toString()
+comment3.text=\r\n\ Returns\ a\ string\ representation\ of\ this\ stack.\r\n\ \r\n\ @return\ a\ string\ representation\ of\ this\ stack\r\n
+comment4.params=
+comment4.target=java.lang.Object\ pop()
+comment4.text=\r\n\ Pops\ the\ top\ character\ from\ the\ stack.\ \r\n\ \r\n\ @return\ the\ top\ character\ from\ the\ stack\r\n
+comment5.params=string
+comment5.target=void\ push(Board)
+comment5.text=\r\n\ Pushes\ the\ string\ to\ the\ top\ of\ the\ stack.\r\n\ \r\n\ @param\ the\ string\ to\ be\ pushed\ to\ the\ top\ of\ the\ stack\r\n
+numComments=6
